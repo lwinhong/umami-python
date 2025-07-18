@@ -210,6 +210,7 @@ async def new_event_async(
     language: str = 'en-US',
     screen: str = '1920x1080',
     ip_address: Optional[str] = None,
+    id: Optional[str] = None,
 ) -> str:
     """
     Creates a new custom event in Umami for the given website_id and hostname (both use the default
@@ -261,6 +262,9 @@ async def new_event_async(
         'data': custom_data,
     }
 
+    if id and id.strip():
+        payload['id'] = id
+
     if ip_address and ip_address.strip():
         payload['ip'] = ip_address
 
@@ -285,6 +289,7 @@ def new_event(
     language: str = 'en-US',
     screen: str = '1920x1080',
     ip_address: Optional[str] = None,
+    id: Optional[str] = None,
 ):
     """
     Creates a new custom event in Umami for the given website_id and hostname (both use the default
@@ -334,6 +339,9 @@ def new_event(
         'data': custom_data,
     }
 
+    if id and id.strip():
+        payload['id'] = id
+
     if ip_address and ip_address.strip():
         payload['ip'] = ip_address
 
@@ -353,6 +361,7 @@ async def new_page_view_async(
     screen: str = '1920x1080',
     ua: str = event_user_agent,
     ip_address: Optional[str] = None,
+    id: Optional[str] = None,
 ):
     """
     Creates a new page view event in Umami for the given website_id and hostname (both use the default
@@ -395,6 +404,9 @@ async def new_page_view_async(
         'url': url,
         'website': website_id,
     }
+
+    if id and id.strip():
+        payload['id'] = id
 
     if ip_address and ip_address.strip():
         payload['ip'] = ip_address
@@ -416,6 +428,7 @@ def new_page_view(
     screen: str = '1920x1080',
     ua: str = event_user_agent,
     ip_address: Optional[str] = None,
+    id: Optional[str] = None,
 ):
     """
     Creates a new page view event in Umami for the given website_id and hostname (both use the default
@@ -458,6 +471,9 @@ def new_page_view(
         'url': url,
         'website': website_id,
     }
+
+    if id and id.strip():
+        payload['id'] = id
 
     if ip_address and ip_address.strip():
         payload['ip'] = ip_address

@@ -1,5 +1,5 @@
 [project]
-name = "umami-analytics"
+name = "umami-analytics-py"
 description = "Umami Analytics Client for Python"
 readme = "README.md"
 license = "MIT"
@@ -29,7 +29,7 @@ dependencies = [
     "httpx",
     "pydantic",
 ]
-version = "0.2.20"
+version = "0.2.22"
 
 
 [project.urls]
