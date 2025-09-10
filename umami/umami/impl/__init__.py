@@ -7,7 +7,7 @@ import httpx
 
 from umami import models, urls
 
-__version__ = '0.2.23'
+__version__ = '0.2.24'
 
 from umami.errors import ValidationError, OperationNotAllowedError
 from datetime import datetime
@@ -187,10 +187,18 @@ def websites() -> list[models.Website]:
 def get_website_event_data(api: str) -> Dict[str, Any]:
     """
     api 只需要给event-data/后面这部分
-    url = f'http://1.co/webid/event-data/{api}'
-
+    url = 'http://xxx.cn/api/websites/websites_id/event-data/api'
     """
-    url = f'{url_base}{urls.websites}/event-data/{api}'
+    global default_website_id
+    url = f'{url_base}{urls.websites}/{default_website_id}/event-data/{api}'
+    return get_request(url)
+
+
+def get_request_api(api: str) -> str:
+    """
+    请求api, 不需要域名部分
+    """
+    url = f'{url_base}/{api}'
     return get_request(url)
 
 

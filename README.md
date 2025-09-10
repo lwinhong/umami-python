@@ -141,3 +141,12 @@ This code listing is very-very high fidelity psuedo code. If you want an actuall
 See the [API documentation](https://umami.is/docs/api) for the remaining endpoints to be added. PRs are welcome. But please open an issue first to see if the proposed feature fits with the direction of this library.
 
 Enjoy.
+
+build:
+```shell
+python  -m build 
+```
+upload
+```shell
+twine upload dist/* 
+```
