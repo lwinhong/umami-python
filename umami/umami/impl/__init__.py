@@ -7,7 +7,7 @@ import httpx
 
 from umami import models, urls
 
-__version__ = '0.2.20'
+__version__ = '0.2.23'
 
 from umami.errors import ValidationError, OperationNotAllowedError
 from datetime import datetime
@@ -26,6 +26,14 @@ user_agent = (
     f'Python {sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro} / '
     f'{sys.platform.capitalize()}'
 )
+
+
+def get_auth_token() -> Optional[str]:
+    """
+    get auth token
+    """
+    global auth_token
+    return auth_token
 
 
 def set_url_base(url: str) -> None:
@@ -176,6 +184,37 @@ def websites() -> list[models.Website]:
     return model.websites
 
 
+def get_website_event_data(api: str) -> Dict[str, Any]:
+    """
+    api 只需要给event-data/后面这部分
+    url = f'http://1.co/webid/event-data/{api}'
+
+    """
+    url = f'{url_base}{urls.websites}/event-data/{api}'
+    return get_request(url)
+
+
+def get_request(api: str):
+    """
+    get 请求， api 完全自己拼接, 比如 /webid/event-data/api
+
+    """
+    global auth_token
+    validate_state(url=True, user=True)
+
+    headers = {
+        'User-Agent': user_agent,
+        'Authorization': f'Bearer {auth_token}',
+    }
+
+    url = f'{url_base}/{api}'
+    resp = httpx.get(url, headers=headers, follow_redirects=True)
+    resp.raise_for_status()
+
+    data = resp.json()
+    return data
+
+
 def enable() -> None:
     """
     Enable event and page view tracking.
@@ -200,17 +239,17 @@ def disable() -> None:
 
 
 async def new_event_async(
-    event_name: str,
-    hostname: Optional[str] = None,
-    url: str = '/',
-    website_id: Optional[str] = None,
-    title: Optional[str] = None,
-    custom_data: Optional[Dict[str, Any]] = None,
-    referrer: str = '',
-    language: str = 'en-US',
-    screen: str = '1920x1080',
-    ip_address: Optional[str] = None,
-    id: Optional[str] = None,
+        event_name: str,
+        hostname: Optional[str] = None,
+        url: str = '/',
+        website_id: Optional[str] = None,
+        title: Optional[str] = None,
+        custom_data: Optional[Dict[str, Any]] = None,
+        referrer: str = '',
+        language: str = 'en-US',
+        screen: str = '1920x1080',
+        ip_address: Optional[str] = None,
+        id: Optional[str] = None,
 ) -> str:
     """
     Creates a new custom event in Umami for the given website_id and hostname (both use the default
@@ -279,17 +318,17 @@ async def new_event_async(
 
 
 def new_event(
-    event_name: str,
-    hostname: Optional[str] = None,
-    url: str = '/event-api-endpoint',
-    website_id: Optional[str] = None,
-    title: Optional[str] = None,
-    custom_data: Optional[Dict[str, Any]] = None,
-    referrer: str = '',
-    language: str = 'en-US',
-    screen: str = '1920x1080',
-    ip_address: Optional[str] = None,
-    id: Optional[str] = None,
+        event_name: str,
+        hostname: Optional[str] = None,
+        url: str = '/event-api-endpoint',
+        website_id: Optional[str] = None,
+        title: Optional[str] = None,
+        custom_data: Optional[Dict[str, Any]] = None,
+        referrer: str = '',
+        language: str = 'en-US',
+        screen: str = '1920x1080',
+        ip_address: Optional[str] = None,
+        id: Optional[str] = None,
 ):
     """
     Creates a new custom event in Umami for the given website_id and hostname (both use the default
@@ -352,16 +391,16 @@ def new_event(
 
 
 async def new_page_view_async(
-    page_title: str,
-    url: str,
-    hostname: Optional[str] = None,
-    website_id: Optional[str] = None,
-    referrer: str = '',
-    language: str = 'en-US',
-    screen: str = '1920x1080',
-    ua: str = event_user_agent,
-    ip_address: Optional[str] = None,
-    id: Optional[str] = None,
+        page_title: str,
+        url: str,
+        hostname: Optional[str] = None,
+        website_id: Optional[str] = None,
+        referrer: str = '',
+        language: str = 'en-US',
+        screen: str = '1920x1080',
+        ua: str = event_user_agent,
+        ip_address: Optional[str] = None,
+        id: Optional[str] = None,
 ):
     """
     Creates a new page view event in Umami for the given website_id and hostname (both use the default
@@ -419,16 +458,16 @@ async def new_page_view_async(
 
 
 def new_page_view(
-    page_title: str,
-    url: str,
-    hostname: Optional[str] = None,
-    website_id: Optional[str] = None,
-    referrer: str = '',
-    language: str = 'en-US',
-    screen: str = '1920x1080',
-    ua: str = event_user_agent,
-    ip_address: Optional[str] = None,
-    id: Optional[str] = None,
+        page_title: str,
+        url: str,
+        hostname: Optional[str] = None,
+        website_id: Optional[str] = None,
+        referrer: str = '',
+        language: str = 'en-US',
+        screen: str = '1920x1080',
+        ua: str = event_user_agent,
+        ip_address: Optional[str] = None,
+        id: Optional[str] = None,
 ):
     """
     Creates a new page view event in Umami for the given website_id and hostname (both use the default
@@ -672,21 +711,21 @@ def active_users(website_id: Optional[str] = None) -> int:
 
 
 async def website_stats_async(
-    start_at: datetime,
-    end_at: datetime,
-    website_id: Optional[str] = None,
-    url: Optional[str] = None,
-    referrer: Optional[str] = None,
-    title: Optional[str] = None,
-    query: Optional[str] = None,
-    event: Optional[str] = None,
-    host: Optional[str] = None,
-    os: Optional[str] = None,
-    browser: Optional[str] = None,
-    device: Optional[str] = None,
-    country: Optional[str] = None,
-    region: Optional[str] = None,
-    city: Optional[str] = None,
+        start_at: datetime,
+        end_at: datetime,
+        website_id: Optional[str] = None,
+        url: Optional[str] = None,
+        referrer: Optional[str] = None,
+        title: Optional[str] = None,
+        query: Optional[str] = None,
+        event: Optional[str] = None,
+        host: Optional[str] = None,
+        os: Optional[str] = None,
+        browser: Optional[str] = None,
+        device: Optional[str] = None,
+        country: Optional[str] = None,
+        region: Optional[str] = None,
+        city: Optional[str] = None,
 ) -> models.WebsiteStats:
     """
     Retrieves the statistics for a specific website.
@@ -748,21 +787,21 @@ async def website_stats_async(
 
 
 def website_stats(
-    start_at: datetime,
-    end_at: datetime,
-    website_id: Optional[str] = None,
-    url: Optional[str] = None,
-    referrer: Optional[str] = None,
-    title: Optional[str] = None,
-    query: Optional[str] = None,
-    event: Optional[str] = None,
-    host: Optional[str] = None,
-    os: Optional[str] = None,
-    browser: Optional[str] = None,
-    device: Optional[str] = None,
-    country: Optional[str] = None,
-    region: Optional[str] = None,
-    city: Optional[str] = None,
+        start_at: datetime,
+        end_at: datetime,
+        website_id: Optional[str] = None,
+        url: Optional[str] = None,
+        referrer: Optional[str] = None,
+        title: Optional[str] = None,
+        query: Optional[str] = None,
+        event: Optional[str] = None,
+        host: Optional[str] = None,
+        os: Optional[str] = None,
+        browser: Optional[str] = None,
+        device: Optional[str] = None,
+        country: Optional[str] = None,
+        region: Optional[str] = None,
+        city: Optional[str] = None,
 ) -> models.WebsiteStats:
     """
     Retrieves the statistics for a specific website.

@@ -11,6 +11,7 @@ from .impl import verify_token_async, verify_token  # noqa: F401, E402
 from .impl import website_stats, website_stats_async  # noqa: F401, E402
 from .impl import websites_async, websites  # noqa: F401, E402
 from .impl import enable, disable  # noqa: F401, E402
+from .impl import get_request, get_website_event_data
 
 __author__ = 'Michael Kennedy <michael@talkpython.fm>'
 __version__ = impl.__version__
@@ -22,35 +23,37 @@ __all__ = [
     # Core modules
     'models',
     'errors',
-    
+
     # Configuration/Setup
-    'set_url_base', 
-    'set_website_id', 
+    'set_url_base',
+    'set_website_id',
     'set_hostname',
     'enable',
     'disable',
-    
+
     # Authentication
-    'login', 
-    'login_async', 
+    'login',
+    'login_async',
     'is_logged_in',
-    'verify_token', 
+    'verify_token',
     'verify_token_async',
-    
+
     # Basic operations
-    'websites', 
+    'websites',
     'websites_async',
-    'heartbeat', 
+    'heartbeat',
     'heartbeat_async',
-    
+
     # Main features - Events and Analytics
-    'new_event', 
+    'new_event',
     'new_event_async',
-    'new_page_view', 
+    'new_page_view',
     'new_page_view_async',
-    'website_stats', 
+    'website_stats',
     'website_stats_async',
-    'active_users', 
+    'active_users',
     'active_users_async',
+    'get_request',
+    'get_website_event_data'
 ]
 # fmt: on
